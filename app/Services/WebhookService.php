@@ -15,11 +15,16 @@ class WebhookService
 
     public function handle(array $payload): void
     {
-        $orderCode         = $payload['order_id'];
-        $transactionStatus = $payload['transaction_status'];
-        $fraudStatus       = $payload['fraud_status'] ?? null;
-        $transactionId     = $payload['transaction_id'];
-        $paymentType       = $payload['payment_type'] ?? null;
+        $orderCode = $payload['order_id'] ?? null;
+        $transactionStatus = $payload['transaction_status'] ?? null;
+
+        if (!$orderCode || !$transactionStatus) {
+            throw new \RuntimeException('Payload webhook tidak lengkap.');
+        }
+
+        $fraudStatus   = $payload['fraud_status'] ?? null;
+        $transactionId = $payload['transaction_id'] ?? null;
+        $paymentType   = $payload['payment_type'] ?? null;
 
         $order = Order::where('order_code', $orderCode)->firstOrFail();
 

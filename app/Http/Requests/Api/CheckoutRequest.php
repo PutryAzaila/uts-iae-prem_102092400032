@@ -1,4 +1,3 @@
-// app/Http/Requests/Api/CheckoutRequest.php
 <?php
 namespace App\Http\Requests\Api;
 

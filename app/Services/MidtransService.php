@@ -49,19 +49,32 @@ class MidtransService
         $response = Http::withBasicAuth($this->serverKey, '')
             ->post($this->snapUrl, $payload);
 
-        if ($response->failed()) {
-            Log::error('Midtrans Snap token creation failed', [
-                'order_code' => $order->order_code,
-                'response'   => $response->json(),
-            ]);
-            throw new \RuntimeException('Gagal membuat token pembayaran.');
-        }
+            if ($response->failed()) {
+                Log::error('Midtrans Snap token creation failed', [
+                    'order_code' => $order->order_code,
+                    'status'     => $response->status(),
+                    'body'       => $response->body(),
+                    'json'       => $response->json(),
+                ]);
+
+                throw new \RuntimeException(
+                    'Gagal membuat token pembayaran. Midtrans: ' . $response->body()
+                );
+            }
 
         return $response->json('token');
     }
 
-    public function verifyNotificationSignature(array $payload): bool
+   public function verifyNotificationSignature(array $payload): bool
     {
+        if (
+            !isset($payload['order_id']) ||
+            !isset($payload['status_code']) ||
+            !isset($payload['gross_amount'])
+        ) {
+            throw new \RuntimeException('Payload webhook Midtrans tidak lengkap.');
+        }
+
         $orderId     = $payload['order_id'];
         $statusCode  = $payload['status_code'];
         $grossAmount = $payload['gross_amount'];
@@ -70,4 +83,4 @@ class MidtransService
 
         return hash_equals($expected, $payload['signature_key'] ?? '');
     }
-}
+    }
