@@ -39,7 +39,7 @@ class OrderController extends Controller
     {
         $order = Order::where('order_code', $orderCode)
             ->where('public_token', $publicToken)
-            ->with(['product', 'payment'])
+            ->with(['product', 'payment', 'productAccount'])
             ->firstOrFail();
 
         $data = [
@@ -58,7 +58,7 @@ class OrderController extends Controller
             'account' => null, 
         ];
 
-        if ($order->isPaid() && $order->product_account_id) {
+        if ($order->isPaid() && $order->productAccount) {
             $account = $order->productAccount->makeCredentialsVisible();
             $data['account'] = [
                 'username_or_email' => $account->account_email_or_username,

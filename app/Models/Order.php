@@ -11,7 +11,7 @@ class Order extends Model
 {
     protected $fillable = [
         'order_code', 'public_token', 'customer_name', 'customer_phone',
-        'customer_email', 'product_id', 'product_account_id',
+        'customer_email', 'product_id',
         'total_amount', 'status', 'expired_at'
     ];
 
@@ -26,9 +26,9 @@ class Order extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function productAccount(): BelongsTo
+    public function productAccount(): HasOne
     {
-        return $this->belongsTo(ProductAccount::class);
+        return $this->hasOne(ProductAccount::class, 'order_id', 'id');
     }
 
     public function payment(): HasOne

@@ -10,16 +10,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class ProductAccount extends Model
 {
     protected $fillable = [
-        'product_id', 'account_email_or_username',
-        'account_password', 'notes', 'status', 'order_id'
+        'product_id', 'email', 'username', 'password',
+        'notes', 'status', 'order_id'
     ];
 
     protected $casts = [
         'status' => AccountStatus::class,
     ];
 
-    // Sembunyikan kredensial dari serialisasi default
-    protected $hidden = ['account_email_or_username', 'account_password'];
+    protected $hidden = ['email', 'username', 'password'];
+
+    protected $appends = ['account_email_or_username', 'account_password'];
 
     public function product(): BelongsTo
     {
@@ -36,9 +37,18 @@ class ProductAccount extends Model
         return $this->hasMany(StockHistories::class);
     }
 
-    // Hanya expose kredensial jika dipanggil eksplisit
     public function makeCredentialsVisible(): static
     {
-        return $this->makeVisible(['account_email_or_username', 'account_password']);
+        return $this->makeVisible(['email', 'username', 'password']);
+    }
+
+    public function getAccountEmailOrUsernameAttribute(): ?string
+    {
+        return $this->email ?: $this->username;
+    }
+
+    public function getAccountPasswordAttribute(): ?string
+    {
+        return $this->password;
     }
 }

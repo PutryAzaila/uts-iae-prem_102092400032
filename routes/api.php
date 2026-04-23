@@ -17,7 +17,7 @@ Route::prefix('v1')->group(function () {
     Route::post('orders',                          [OrderController::class, 'store']);
     Route::get('orders/{order_code}/{public_token}', [OrderController::class, 'show']);
 
-    Route::post('webhook/midtrans', [WebhookController::class, 'handle']);
+    Route::get('webhook/midtrans', [WebhookController::class, 'handle']);
 });
 
 Route::prefix('v1/admin')->group(function () {

@@ -23,11 +23,11 @@ class WebhookController extends Controller
         Log::info('Midtrans Webhook received', ['payload' => $payload]);
 
         try {
-            // sementara skip signature dulu
-            // if (!$this->midtrans->verifyNotificationSignature($payload)) {
-            //     Log::warning('Midtrans: Invalid signature', $payload);
-            //     return response()->json(['message' => 'Invalid signature'], 403);
-            // }
+            if (config('midtrans.validate_webhook_signature', true)
+                && !$this->midtrans->verifyNotificationSignature($payload)) {
+                Log::warning('Midtrans: Invalid signature', ['payload' => $payload]);
+                return response()->json(['message' => 'Invalid signature'], 403);
+            }
 
             $this->webhook->handle($payload);
 
@@ -37,16 +37,12 @@ class WebhookController extends Controller
         } catch (\Throwable $e) {
             Log::error('Webhook error', [
                 'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
                 'payload' => $payload,
             ]);
 
             return response()->json([
                 'message' => 'Internal error',
                 'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
             ], 500);
         }
     }

@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Log;
 class WebhookService
 {
     public function __construct(
-        private AccountAssignmentService $accountAssignment
+        private AccountAssignmentService $accountAssignment,
+        private MidtransService $midtrans
     ) {}
 
     public function handle(array $payload): void
@@ -18,8 +19,18 @@ class WebhookService
         $orderCode = $payload['order_id'] ?? null;
         $transactionStatus = $payload['transaction_status'] ?? null;
 
-        if (!$orderCode || !$transactionStatus) {
-            throw new \RuntimeException('Payload webhook tidak lengkap.');
+        if (!$orderCode) {
+            throw new \RuntimeException('Payload webhook tidak memiliki order_id.');
+        }
+
+        if (!$transactionStatus) {
+            $statusPayload = $this->midtrans->getTransactionStatus($orderCode);
+            $payload = array_merge($statusPayload, $payload);
+            $transactionStatus = $payload['transaction_status'] ?? null;
+        }
+
+        if (!$transactionStatus) {
+            throw new \RuntimeException('Status transaksi Midtrans tidak ditemukan.');
         }
 
         $fraudStatus   = $payload['fraud_status'] ?? null;
@@ -43,7 +54,9 @@ class WebhookService
                     'transaction_status' => $transactionStatus,
                     'payment_type'       => $paymentType,
                     'raw_response'       => $payload,
-                    'paid_at'            => $newStatus === OrderStatus::Paid ? now() : null,
+                    'paid_at'            => $newStatus === OrderStatus::Paid
+                        ? ($order->payment?->paid_at ?? now())
+                        : null,
                 ]
             );
 
