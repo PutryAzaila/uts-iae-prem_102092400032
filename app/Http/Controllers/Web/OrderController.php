@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
 {
@@ -23,5 +24,16 @@ class OrderController extends Controller
             ?? $order->payment?->snap_token;
 
         return view('orders.show', compact('order', 'account', 'snapToken'));
+    }
+
+    public function status(string $orderCode, string $publicToken): JsonResponse
+    {
+        $order = Order::where('order_code', $orderCode)
+                      ->where('public_token', $publicToken)
+                      ->firstOrFail();
+
+        return response()->json([
+            'status' => $order->status->value,
+        ]);
     }
 }

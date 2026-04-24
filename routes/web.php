@@ -14,3 +14,5 @@ Route::get('/checkout/{slug}',   [CheckoutController::class, 'index'])->name('ch
 Route::post('/checkout/{slug}',  [CheckoutController::class, 'store'])->name('checkout.store');
 
 Route::get('/orders/{order_code}/{public_token}', [OrderController::class, 'show'])->name('orders.show');
+// routes/web.php
+Route::get('/orders/{order_code}/{public_token}/status', [OrderController::class, 'status'])->name('orders.status');

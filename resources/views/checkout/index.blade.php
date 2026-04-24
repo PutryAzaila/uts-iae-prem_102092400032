@@ -20,7 +20,6 @@
 
                 <div style="display:flex;flex-direction:column;gap:20px;">
 
-                    {{-- Nama --}}
                     <div>
                         <label class="form-label">
                             Nama Lengkap <span style="color:#ec4899;">*</span>
@@ -34,7 +33,6 @@
                         @enderror
                     </div>
 
-                    {{-- No Telepon --}}
                     <div>
                         <label class="form-label">
                             Nomor Telepon <span style="color:#ec4899;">*</span>
@@ -48,7 +46,6 @@
                         @enderror
                     </div>
 
-                    {{-- Email --}}
                     <div>
                         <label class="form-label">
                             Email
@@ -64,14 +61,12 @@
                     </div>
                 </div>
 
-                {{-- Note --}}
                 <div style="background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.12);border-radius:12px;padding:14px 16px;margin-top:24px;margin-bottom:28px;">
                     <p style="font-size:0.8rem;color:#6b7280;margin:0;line-height:1.6;">
                         <i class="fa-solid fa-shield-halved"></i> Data kamu hanya digunakan untuk keperluan pesanan ini. Kami tidak menyimpan informasi sensitif.
                     </p>
                 </div>
 
-                {{-- Submit --}}
                 <button type="submit"
                         :disabled="loading"
                         class="btn-primary"
@@ -83,10 +78,8 @@
         </div>
     </div>
 
-    {{-- ===== KANAN: SUMMARY ===== --}}
     <div style="position:sticky; top:100px;">
 
-        {{-- Product Card --}}
         <div class="card" style="padding:24px; margin-bottom:16px;">
             <p style="font-size:0.75rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 16px;">RINGKASAN PESANAN</p>
 
